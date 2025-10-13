@@ -1,0 +1,35 @@
+ID,Name,Desc,costGrowth,maxLevel,damageMultiplier,damageMultipleGrowth,statType,Value,valueGrowth
+1,두개골 파괴자,"{Value}% 탭 대미지, {damageMultiplier}% 대미지 합계
+레벨이 오를 때마다 {Value}% 탭 대미지, {damageMultipleGrowth}% 대미지 합계",3,99,0.6,0.3,tapDamage,0.02,0.02
+2,마법사의 돌,"{Value}% 몬스터 HP, {damageMultiplier}% 대미지 합계
+레벨이 오를 때마다 {Value}% 몬스터 HP (최대 -25%}, {damageMultipleGrowth}% 대미지 합계 (최대 750%}",5,5,3,1.5,decreaseMonsterHP,-0.05,-0.05
+3,영웅의 일격,"{Value}% 크리티컬 대미지, {damageMultiplier}% 대미지 합계
+레벨이 오를 때마다 {Value}% 크리티컬 대미지, {damageMultipleGrowth}% 대미지 합계",3,99,0.3,0.15,criticalDamage,0.2,0.2
+4,죽음 추적자,"{Value}% 크리티컬 확률, {damageMultiplier}% 대미지 합계
+레벨이 오를 때마다 {Value}% 크리티컬 확률(최대 +50%},{damageMultipleGrowth}% 대미지 합계(최대 +390%}",4,25,0.3,0.15,criticalProbability,0.02,0.02
+5,급속성장의 포션,"{Value}% 공격속도, {damageMultiplier}% 대미지 합계
+레벨이 오를 때마다 {Value}% 공격속도, {damageMultipleGrowth}% 대미지 합계",4,99,0.1,0.06,autoAttackSpeed,0.05,0.05
+6,성스러운 오라,"{Value}% 환생 시 보물 획득, {damageMultiplier}% 대미지 합계
+레벨이 오를 때마다 {Value}% 환생시 보물 획득,{damageMultipleGrowth}% 대미지 합계",3,99,0.3,0.15,rebornTreasure,0.05,0.05
+7,용사의 방패,"{Value}% 보스 처치 시 골드, {damageMultiplier}% 대미지 합계
+레벨이 오를 때마다 {Value}% 보스 처치 시 골드, {damageMultipleGrowth}% 대미지 합계",3,99,0.6,0.3,bossGold,1,1
+8,장인의 엘릭서,"{Value}% 모든 골드 획득, {damageMultiplier}% 대미지 합계
+레벨이 오를 때마다 {Value}% 모든 골드 획득, {damageMultipleGrowth}% 대미지 합계",3,99,0.4,0.2,totalGoldPercent,0.15,0.15
+9,경이의 반지,"{Value}% 레벨업 비용, {damageMultiplier}% 대미지 합계
+레벨이 오를 때마다 {Value}% 레벨업 비용, {damageMultipleGrowth}% 대미지 합계",5,25,0.3,0.15,decreaseUpgradeCost,-0.02,-0.02
+10,분노의 도끼,"{Value}% 몬스터 이터 지속시간, {damageMultiplier}% 대미지 합계
+레벨이 오를 때마다 {Value}% 몬스터 이터 지속시간, {damageMultipleGrowth}% 대미지 합계",3,99,0.6,0.3,monsterEaterDuration,0.1,0.1
+11,야만인의 열기,"{Value}% 몬스터 이터 쿨타임, {damageMultiplier}% 대미지 합계
+레벨이 오를 때마다 -{Value}% 몬스터 이터 지속시간, {damageMultipleGrowth}% 대미지 합계",4,10,0.6,0.3,decreaseMonsterEaterCoolTime,-0.05,-0.05
+12,행운의 슬라임,"{Value}% 일반 몬스터 처치 시 골드, {damageMultiplier}% 대미지 합계
+레벨이 오를 때마다 {Value}% 일반 몬스터 처치 시 골드, {damageMultipleGrowth}% 대미지 합계",2,99,0.3,0.15,normalGoldPercent,0.05,0.05
+13,신성의 성배,"{Value}% 일반 몬스터 처치 시 골드 10배, {damageMultiplier}% 대미지 합계
+레벨이 오를 때마다 {Value}% 일반 몬스터 처치 시 골드 10배, {damageMultipleGrowth}% 대미지 합계",2,99,0.33,0.17,getGoldTenTimesProbability,0.005,0.005
+14,구원의 방패,"{Value}% 보스 처치 시간, {damageMultiplier}% 대미지 합계
+레벨이 오를 때마다 {Value}% 보스 처치 시간, {damageMultipleGrowth}% 대미지 합계",5,25,0.3,0.15,increaseBossTime,0.1,0.1
+15,생명의 망토,"{Value}% 보스 HP, {damageMultiplier}% 대미지 합계
+레벨이 오를 때마다 {Value}% 보스 HP, {damageMultipleGrowth}% 대미지 합계",5,25,0.3,0.15,decreaseBossHP,-0.02,-0.02
+16,슬라임 왕관,"{Value}% 무기 획득 확률, {damageMultiplier}% 대미지 합계
+레벨이 오를 때마다 {Value}% 무기 획득 확률, {damageMultipleGrowth}% 대미지 합계",6,10,0.4,0.2,increaseWeaponGetProbability,0.05,0.05
+18,신성한 방패,"{Value}% 파워 슬래시 쿨타임, {damageMultiplier}% 대미지 합계
+레벨이 오를 때마다 {Value}% 파워 슬래시 쿨타임, {damageMultipleGrowth}% 대미지 합계",5,10,0.4,0.2,decreasePowerSlashCooTime,-0.05,-0.05
