@@ -339,7 +339,7 @@ public class XlsxToJsonAndRegistry : EditorWindow
     {
         public string FileName;
         public string[] Headers;
-        public string[] FieldTypes; // "int"/"float"/"bool"/"string"/"StatType"
+        public string[] FieldTypes; // "int"/"BigNum"/"float"/"bool"/"string"/"StatType"
         public string ClassName => MakeSafeTypeName(FileName) + "Row";
     }
 
@@ -352,6 +352,7 @@ public class XlsxToJsonAndRegistry : EditorWindow
         bool allBool = true;
         bool allNumeric = true;
         bool anyFloat = false;
+        bool anyExceedsInt = false;  // int 범위 초과 여부
 
         foreach (DataRow r in t.Rows)
         {
@@ -373,10 +374,21 @@ public class XlsxToJsonAndRegistry : EditorWindow
             }
 
             string n = NormalizeNumeric(s);
-            if (float.TryParse(n, NumberStyles.Float, CultureInfo.InvariantCulture, out _))
+            if (double.TryParse(n, NumberStyles.Float, CultureInfo.InvariantCulture, out var numValue))
             {
-                if (!int.TryParse(n, NumberStyles.Integer, CultureInfo.InvariantCulture, out _))
+                // 소수점이 있으면 float
+                if (n.Contains('.') || n.Contains('e') || n.Contains('E'))
+                {
                     anyFloat = true;
+                }
+                else
+                {
+                    // 정수인 경우 int 범위 체크
+                    if (numValue > int.MaxValue || numValue < int.MinValue)
+                    {
+                        anyExceedsInt = true;
+                    }
+                }
             }
             else
             {
@@ -386,7 +398,12 @@ public class XlsxToJsonAndRegistry : EditorWindow
 
         if (!any) return "string";
         if (allBool && !allNumeric) return "bool";
-        if (allNumeric) return anyFloat ? "float" : "int";
+        if (allNumeric)
+        {
+            if (anyFloat) return "float";
+            if (anyExceedsInt) return "BigNum";  // int 범위 초과하면 BigNum
+            return "int";  // 범위 내면 int 유지
+        }
         return "string";
     }
 
@@ -506,8 +523,8 @@ public class XlsxToJsonAndRegistry : EditorWindow
             sb.AppendLine($"    public static readonly List<{m.ClassName}> {m.FileName}List = new();");
 
         sb.AppendLine();
-        sb.AppendLine($"    const string KEY_PREFIX = {keyPrefixLit};");
-        sb.AppendLine($"    const string JSON_ABS   = {jsonAbsLit};");
+        sb.AppendLine($"    static readonly string KEY_PREFIX = {keyPrefixLit};");
+        sb.AppendLine($"    static readonly string JSON_ABS   = {jsonAbsLit};");
 
         // GetInt: 공백/ NBSP만 제거 → 정수/실수/과학표기 허용
         sb.AppendLine();
@@ -526,6 +543,27 @@ public class XlsxToJsonAndRegistry : EditorWindow
         sb.AppendLine("            return Convert.ToInt32(s, CultureInfo.InvariantCulture);");
         sb.AppendLine("        }");
         sb.AppendLine("        catch { return def; }");
+        sb.AppendLine("    }");
+
+        // GetBigNum: 정수 → BigNum 변환
+        sb.AppendLine();
+        sb.AppendLine("    static BigNum GetBigNum(Dictionary<string, object> m, string k)");
+        sb.AppendLine("    {");
+        sb.AppendLine("        if (m == null || !m.TryGetValue(k, out var v) || v == null) return BigNum.Zero;");
+        sb.AppendLine("        try");
+        sb.AppendLine("        {");
+        sb.AppendLine("            if (v is int i) return BigNum.FromInt(i);");
+        sb.AppendLine("            if (v is long l) return BigNum.FromLong(l);");
+        sb.AppendLine("            if (v is double d) return BigNum.FromDouble(d);");
+        sb.AppendLine("            if (v is float f) return BigNum.FromDouble(f);");
+        sb.AppendLine("            var s = v.ToString();");
+        sb.AppendLine("            if (string.IsNullOrWhiteSpace(s)) return BigNum.Zero;");
+        sb.AppendLine("            s = s.Replace(\"\\u00A0\", string.Empty).Replace(\" \", string.Empty).Replace(\",\", string.Empty);");
+        sb.AppendLine("            if (double.TryParse(s, NumberStyles.Any, CultureInfo.InvariantCulture, out var d2))");
+        sb.AppendLine("                return BigNum.FromDouble(d2);");
+        sb.AppendLine("            return BigNum.Zero;");
+        sb.AppendLine("        }");
+        sb.AppendLine("        catch { return BigNum.Zero; }");
         sb.AppendLine("    }");
 
         // GetFloat: 안전 파서 (스페이스/NBSP만 제거)
@@ -610,7 +648,7 @@ public class XlsxToJsonAndRegistry : EditorWindow
             sb.AppendLine("    {");
             sb.AppendLine("        string jsonText = null;");
             sb.AppendLine("        // 1) Resources 우선");
-            sb.AppendLine("        if (KEY_PREFIX != null)");
+            sb.AppendLine("        if (!string.IsNullOrEmpty(KEY_PREFIX))");
             sb.AppendLine("        {");
             sb.AppendLine($"            var ta = Resources.Load<TextAsset>({keyLit});");
             sb.AppendLine("            if (ta != null) jsonText = ta.text;");
@@ -651,7 +689,8 @@ public class XlsxToJsonAndRegistry : EditorWindow
                 while (!usedMembers.Add(uniq))
                     uniq = member + "_" + (++suf);
 
-                if (t == "int") sb.AppendLine($"            d.{uniq} = GetInt(map, \"{h}\", 0);");
+                if (t == "BigNum") sb.AppendLine($"            d.{uniq} = GetBigNum(map, \"{h}\");");
+                else if (t == "int") sb.AppendLine($"            d.{uniq} = GetInt(map, \"{h}\", 0);");
                 else if (t == "float") sb.AppendLine($"            d.{uniq} = GetFloat(map, \"{h}\", 0f);");
                 else if (t == "bool") sb.AppendLine($"            d.{uniq} = GetBool(map, \"{h}\", false);");
                 else if (t == "StatType") sb.AppendLine($"            d.{uniq} = ParseStatType(GetString(map, \"{h}\", \"\"));");
