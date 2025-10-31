@@ -161,6 +161,14 @@ public struct BigNum : IComparable<BigNum>, IEquatable<BigNum>
         return TryToLong(out long result) ? result : defaultValue;
     }
 
+    public float ToFloatSafe(float defaultValue = 0f)
+    {
+        double d = ToDouble();
+        if (d > float.MaxValue || d < float.MinValue)
+            return defaultValue;
+        return (float)d;
+    }
+
     // ─────────────────────────────────────────────────────────────
     // 비교
     // ─────────────────────────────────────────────────────────────
